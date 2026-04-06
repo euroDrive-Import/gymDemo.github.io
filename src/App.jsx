@@ -11,10 +11,10 @@ const BRAND_NAME = "ELITE FITNESS";
 const GENERIC_PHONE = "+34 000 000 000";
 
 const PRODUCTS = [
-    { id: 'p1', name: "Plan OnlyDiet", price: "49.00", image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800", features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Recetario mensual"] },
-    { id: 'p2', name: "Plan Workout", price: "59.00", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800", features: ["Entrenamiento personalizado", "Rutinas hogar/gym", "Revisiones mensuales"] },
-    { id: 'p3', name: "Plan Full Fit", price: "99.00", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800", featured: true, features: ["Nutrición + Entrenamiento", "Revisiones quincenales", "Ajustes ilimitados"] },
-    { id: 'p4', name: "Team Pro", price: "149.00", image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800", features: ["Entrenamiento avanzado", "Posing técnico", "Mindset y seguimiento"] }
+    { id: 'p1', name: "Plan Iniciación", price: "49.00", period: "mes", image: "https://images.unsplash.com/photo-1541534741688-6078c64b5903?w=800", features: ["Plan nutricional básico", "Revisiones cada 14 días", "Acceso app fitness"] },
+    { id: 'p2', name: "Plan Avanzado", price: "129.00", period: "trimestre", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800", features: ["Pack de entrenamiento trimestral", "Nutrición deportiva", "Soporte prioritario"] },
+    { id: 'p3', name: "Plan Full Elite", price: "99.00", period: "mes", image: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800", featured: true, features: ["Pack mensual completo", "Revisiones semanales", "Ajustes ilimitados"] },
+    { id: 'p4', name: "Suscripción Anual", price: "899.00", period: "año", image: "https://images.unsplash.com/photo-1620188467120-093a100344bb?w=800", features: ["Acceso élite todo el año", "Regalo: 2 meses gratis", "Seguimiento 1 a 1"] }
 ];
 
 const BLOG_SAMPLES = [
@@ -265,7 +265,7 @@ const ProductCard = ({ product, addToCart, index }) => (
         <div className="card-img-v2" style={{ backgroundImage: `url(${product.image})` }}></div>
         <div className="card-body-v2">
             <h3>{product.name}</h3>
-            <div className="card-price-v2">{product.price}<span>€/sesión</span></div>
+            <div className="card-price-v2">{product.price}<span>€/{product.period}</span></div>
             <ul className="card-list-v2">
                 {product.features.map((f, i) => <li key={i}><Check size={14} className="gold" /> {f}</li>)}
             </ul>
