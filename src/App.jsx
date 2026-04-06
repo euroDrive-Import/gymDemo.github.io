@@ -272,7 +272,7 @@ function App() {
             >
                 <h3>Transforma tu vida hoy</h3>
                 <p>Reserva tu sesión informativa gratuita conmigo por WhatsApp.</p>
-                <button className="btn-whatsapp-premium" onClick={() => window.open('https://wa.me/34635303875')}>
+                <button className="btn-whatsapp-premium" onClick={() => window.open('https://wa.me/34000000000')}>
                     <Phone size={20} /> CONTACTAR CON PAULETTE
                 </button>
             </motion.div>
@@ -420,8 +420,9 @@ function App() {
                     {['Privacidad', 'Condiciones', 'FAQ', 'Contacto'].map(l => <a key={l} href="#">{l}</a>)}
                 </div>
                 <div className="f-item-social">
-                    <a href="#"><Instagram size={20} /></a>
-                    <a href="#"><Phone size={20} /></a>
+                    <a href="https://instagram.com" target="_blank"><Instagram size={20} /></a>
+                    <a href="tel:+34000000000"><Phone size={20} /></a>
+                    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>+34 000 000 000</span>
                 </div>
             </div>
             <div className="footer-base">
