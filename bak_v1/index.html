@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA PAULETTE | Planes Online & Fitness</title>
+    <meta name="description" content="Nutrición y entrenamiento personalizado para mujeres. Bienestar físico y emocional con planes adaptados a ti.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="#">LA PAULETTE</a>
+            </div>
+            <nav class="nav-links">
+                <a href="#planes">Planes</a>
+                <a href="#tienda">Tienda</a>
+                <a href="#sobre-mi">Sobre Mí</a>
+                <a href="#resultados">Resultados</a>
+            </nav>
+            <div class="nav-icons">
+                <div class="cart-btn" id="cartBtn">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count">0</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu (Mobile) -->
+    <div class="side-menu" id="sideMenu">
+        <div class="close-menu" id="closeMenu"><i class="fa-solid fa-xmark"></i></div>
+        <a href="#planes" class="menu-link">Planes</a>
+        <a href="#tienda" class="menu-link">Tienda</a>
+        <a href="#sobre-mi" class="menu-link">Sobre Mí</a>
+        <a href="#resultados" class="menu-link">Resultados</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h6 class="subtitle">MI TRABAJO ES ACOMPAÑARTE</h6>
+                <h1 class="title">Es momento de cambiar <br>tu relación con tu cuerpo</h1>
+                <p class="description">No se trata solo de cambiar tu cuerpo. Se trata de acompañarte con un plan personalizado que encaje con tu vida y te ayude a recuperar equilibrio, confianza y bienestar.</p>
+                <div class="hero-actions">
+                    <a href="#planes" class="btn primary">VER PLANES</a>
+                    <a href="https://wa.me/34635303875" class="btn secondary">HABLAR WHASTAPP</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Planes Section -->
+    <section id="planes" class="section planes-section animate">
+        <div class="container">
+            <header class="section-header">
+                <h6 class="subtitle">CONOCE</h6>
+                <h2 class="titleSerif">Nuestros Planes</h2>
+            </header>
+            
+            <div class="plans-grid">
+                <!-- Planning OnlyDiet -->
+                <div class="plan-card" data-id="p1" data-name="Plan OnlyDiet" data-price="49.99">
+                    <div class="plan-image diet"></div>
+                    <div class="plan-info">
+                        <h3>Plan OnlyDiet</h3>
+                        <p class="price">49,99€</p>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> Plan nutricional personalizado</li>
+                            <li><i class="fa-solid fa-check"></i> Revisiones cada 14 días</li>
+                            <li><i class="fa-solid fa-check"></i> Opciones veganas/vegetarianas</li>
+                            <li><i class="fa-solid fa-check"></i> Soporte vía WhatsApp</li>
+                        </ul>
+                        <button class="btn-add add-to-cart">AÑADIR AL CARRITO</button>
+                    </div>
+                </div>
+
+                <!-- Planning Workout -->
+                <div class="plan-card" data-id="p2" data-name="Plan Workout" data-price="59.99">
+                    <div class="plan-image workout"></div>
+                    <div class="plan-info">
+                        <h3>Plan Workout</h3>
+                        <p class="price">59,99€</p>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> Plan entrenamiento personalizado</li>
+                            <li><i class="fa-solid fa-check"></i> Adaptación hogar o gimnasio</li>
+                            <li><i class="fa-solid fa-check"></i> Revisiones mensuales</li>
+                            <li><i class="fa-solid fa-check"></i> Soporte vía WhatsApp</li>
+                        </ul>
+                        <button class="btn-add add-to-cart">AÑADIR AL CARRITO</button>
+                    </div>
+                </div>
+
+                <!-- Planning Full Fit -->
+                <div class="plan-card featured" data-id="p3" data-name="Plan Full Fit" data-price="89.99">
+                    <div class="badge">RECOMENDADO</div>
+                    <div class="plan-image full"></div>
+                    <div class="plan-info">
+                        <h3>Plan Full Fit</h3>
+                        <p class="price">89,99€</p>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> Todo lo de OnlyDiet + Workout</li>
+                            <li><i class="fa-solid fa-check"></i> Revisiones cada 14 días</li>
+                            <li><i class="fa-solid fa-check"></i> Ajustes ilimitados del plan</li>
+                            <li><i class="fa-solid fa-check"></i> Respuesta garantizada < 24h</li>
+                        </ul>
+                        <button class="btn-add add-to-cart">AÑADIR AL CARRITO</button>
+                    </div>
+                </div>
+
+                <!-- Planning Competition -->
+                <div class="plan-card" data-id="p4" data-name="Team Competición" data-price="149.99">
+                    <div class="plan-image comp"></div>
+                    <div class="plan-info">
+                        <h3>Team Competición</h3>
+                        <p class="price">149,99€</p>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> Entrenamiento avanzado</li>
+                            <li><i class="fa-solid fa-check"></i> Trabajo técnico de poses (Posing)</li>
+                            <li><i class="fa-solid fa-check"></i> Asesoramiento en estética</li>
+                            <li><i class="fa-solid fa-check"></i> Mindset y motivación</li>
+                        </ul>
+                        <button class="btn-add add-to-cart">AÑADIR AL CARRITO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tienda / Accesorios Section -->
+    <section id="tienda" class="section products-section animate">
+        <div class="container">
+            <header class="section-header">
+                <h6 class="subtitle">TIENDA</h6>
+                <h2 class="titleSerif">Accesorios y Ebooks</h2>
+            </header>
+            <div class="products-grid">
+                <div class="product-item" data-id="eb1" data-name="Ebook: Recetario Fit" data-price="19.90">
+                    <div class="product-thumb ebook"></div>
+                    <div class="product-meta">
+                        <h4>Ebook: Recetario Fit</h4>
+                        <p>19,90€</p>
+                        <button class="btn-icon add-to-cart"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="product-item" data-id="acc1" data-name="Bandas Elásticas (Set)" data-price="24.50">
+                    <div class="product-thumb bands"></div>
+                    <div class="product-meta">
+                        <h4>Bandas Elásticas (Set)</h4>
+                        <p>24,50€</p>
+                        <button class="btn-icon add-to-cart"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="product-item" data-id="acc2" data-name="Shaker Pro" data-price="12.00">
+                    <div class="product-thumb shaker"></div>
+                    <div class="product-meta">
+                        <h4>Shaker Pro</h4>
+                        <p>12,00€</p>
+                        <button class="btn-icon add-to-cart"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Mí Section -->
+    <section id="sobre-mi" class="section about-section animate">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-video">
+                    <div class="video-placeholder">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h6 class="subtitle">CONÓCEME</h6>
+                    <h2 class="titleSerif">Soy Paulette</h2>
+                    <p>Mi objetivo es ayudarte a encontrar ese equilibrio que tanto buscas. Llevo años acompañando a mujeres a transformar no solo su físico, sino su mentalidad y su relación con la comida y el deporte.</p>
+                    <p>No creo en soluciones mágicas, sino en procesos sostenibles que se adapten a tu ritmo de vida actual.</p>
+                    <a href="https://wa.me/34635303875" class="btn primary">QUIERO EMPEZAR</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resultados Section -->
+    <section id="resultados" class="section results-section animate">
+        <div class="container">
+            <header class="section-header">
+                <h6 class="subtitle">TRANSFORMACIONES</h6>
+                <h2 class="titleSerif">Resultados Reales</h2>
+            </header>
+            <div class="results-carousel">
+                <div class="result-card">
+                    <div class="result-img before" style="background-image: url('https://images.unsplash.com/photo-1549476464-37392f717541?auto=format&fit=crop&q=80&w=400')"><span>Antes</span></div>
+                    <div class="result-img after" style="background-image: url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400')"><span>Después</span></div>
+                    <div class="result-info">
+                        <h4>María, -12kg</h4>
+                        <p>"Aprendí a comer sin culpa y a disfrutar de mis entrenamientos."</p>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-img before" style="background-image: url('https://images.unsplash.com/photo-1583454110551-21f2fa2ec617?auto=format&fit=crop&q=80&w=400')"><span>Antes</span></div>
+                    <div class="result-img after" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400')"><span>Después</span></div>
+                    <div class="result-info">
+                        <h4>Elena, Definición</h4>
+                        <p>"El Plan Full Fit cambió mi vida por completo. Me siento más fuerte que nunca."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checkout Modal (Hidden by default) -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal">
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-content">
+                <h2 class="titleSerif">Finalizar Pedido</h2>
+                <form id="checkoutForm">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" required placeholder="Tu nombre...">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" required placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp (para el seguimiento)</label>
+                        <input type="tel" required placeholder="+34 000 000 000">
+                    </div>
+                    <div class="payment-method">
+                        <p>Método de Pago</p>
+                        <div class="payment-options">
+                            <label><input type="radio" name="pay" checked> Tarjeta / Apple Pay</label>
+                            <label><input type="radio" name="pay"> Bizum</label>
+                            <label><input type="radio" name="pay"> PayPal</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary w-100">CONFIRMAR Y PAGAR</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Tu Carrito</h3>
+            <button class="close-cart" id="closeCart"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items added here -->
+            <div class="empty-msg">Tu carrito está vacío.</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalPrice">0,00€</span>
+            </div>
+            <button class="btn-checkout" id="checkoutBtn">FINALIZAR COMPRA</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <h2>LA PAULETTE</h2>
+                <p>Nutrición y entrenamiento personalizado.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacidad</a>
+                <a href="#">Cookies</a>
+                <a href="#">Condiciones</a>
+            </div>
+            <div class="footer-contact">
+                <p><i class="fa-solid fa-envelope"></i> info@lapaulettefitness.com</p>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 La Paulette Fitness. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

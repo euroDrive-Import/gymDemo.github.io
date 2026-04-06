@@ -1,0 +1,30 @@
+:root {
+    --primary: #1a1a1a;
+    --secondary: #d4af37;
+    --text: #333333;
+    --bg: #ffffff;
+    --glass: rgba(255, 255, 255, 0.7);
+    --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
