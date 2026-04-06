@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     ShoppingCart, Menu, X, Plus, Trash2, Check, 
     Instagram, Phone, Mail, Play, Download, Gift, ArrowRight, Star, 
-    ChevronRight, CreditCard, ShieldCheck
+    ChevronRight, CreditCard, ShieldCheck, ShoppingBag
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import './App.css';
@@ -90,8 +90,15 @@ function App() {
         {/* RESULTS MARQUEE WOW */}
         <section className="marquee-results">
             <div className="marquee-content">
-                {[1,2,3,4,5,6].map(i => (
-                    <div key={i} className="result-slide"><div className="res-img-placeholder" /></div>
+                {[
+                    "https://images.unsplash.com/photo-1549476464-37392f717541?w=800",
+                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800",
+                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800",
+                    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
+                    "https://images.unsplash.com/photo-1549476464-37392f717541?w=800",
+                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800"
+                ].map((url, i) => (
+                    <div key={i} className="result-slide"><div className="res-img-placeholder" style={{ backgroundImage: `url(${url})` }} /></div>
                 ))}
             </div>
         </section>
