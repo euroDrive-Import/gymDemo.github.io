@@ -11,10 +11,10 @@ const BRAND_NAME = "ELITE FITNESS";
 const GENERIC_PHONE = "+34 000 000 000";
 
 const PRODUCTS = [
-    { id: 'p1', name: "Plan Iniciación", price: "49.00", period: "mes", image: "https://images.unsplash.com/photo-1541534741688-6078c64b5903?w=800", features: ["Plan nutricional básico", "Revisiones cada 14 días", "Acceso app fitness"] },
-    { id: 'p2', name: "Plan Avanzado", price: "129.00", period: "trimestre", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800", features: ["Pack de entrenamiento trimestral", "Nutrición deportiva", "Soporte prioritario"] },
-    { id: 'p3', name: "Plan Full Elite", price: "99.00", period: "mes", image: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800", featured: true, features: ["Pack mensual completo", "Revisiones semanales", "Ajustes ilimitados"] },
-    { id: 'p4', name: "Suscripción Anual", price: "899.00", period: "año", image: "https://images.unsplash.com/photo-1620188467120-093a100344bb?w=800", features: ["Acceso élite todo el año", "Regalo: 2 meses gratis", "Seguimiento 1 a 1"] }
+    { id: 'p1', name: "Plan Iniciación", price: "49.00", period: "mes", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800", features: ["Plan nutricional básico", "Revisiones cada 14 días", "Acceso app fitness"] },
+    { id: 'p2', name: "Plan Avanzado", price: "129.00", period: "trimestre", image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800", features: ["Pack de entrenamiento trimestral", "Nutrición deportiva", "Soporte prioritario"] },
+    { id: 'p3', name: "Plan Full Elite", price: "99.00", period: "mes", image: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?auto=format&fit=crop&q=80&w=800", featured: true, features: ["Pack mensual completo", "Revisiones semanales", "Ajustes ilimitados"] },
+    { id: 'p4', name: "Suscripción Anual", price: "899.00", period: "año", image: "https://images.unsplash.com/photo-1620188467120-093a100344bb?auto=format&fit=crop&q=80&w=800", features: ["Acceso élite todo el año", "Regalo: 2 meses gratis", "Seguimiento 1 a 1"] }
 ];
 
 const BLOG_SAMPLES = [
@@ -87,18 +87,17 @@ function App() {
             <div className="scroll-indicator"><div className="mouse"><div className="wheel"></div></div></div>
         </section>
 
-        {/* RESULTS MARQUEE WOW */}
         <section className="marquee-results">
             <div className="marquee-content">
                 {[
-                    "https://images.unsplash.com/photo-1549476464-37392f717541?w=800",
-                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800",
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800",
-                    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
-                    "https://images.unsplash.com/photo-1549476464-37392f717541?w=800",
-                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800"
+                    "https://images.unsplash.com/photo-1549476464-37392f717541?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1549476464-37392f717541?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
                 ].map((url, i) => (
-                    <div key={i} className="result-slide"><div className="res-img-placeholder" style={{ backgroundImage: `url(${url})` }} /></div>
+                    <div key={i} className="result-slide"><img src={url} alt="resultado elite" loading="lazy" /></div>
                 ))}
             </div>
         </section>
@@ -176,7 +175,9 @@ function App() {
             <div className="p-grid-wow">
                 {BLOG_SAMPLES.map((post, idx) => (
                     <div key={idx} className="blog-card-v2">
-                        <div className="bc-img" style={{ backgroundImage: `url(${post.img})` }}></div>
+                        <div className="bc-img-wrapper">
+                            <img src={post.img + "?auto=format&fit=crop&q=80&w=800"} alt={post.title} loading="lazy" />
+                        </div>
                         <div className="bc-body">
                             <span className="bc-date">{post.date}</span>
                             <h3>{post.title}</h3>
@@ -262,7 +263,9 @@ const ProductCard = ({ product, addToCart, index }) => (
         transition={{ delay: index * 0.1 }}
     >
         {product.featured && <div className="card-tag">TOP ELITE</div>}
-        <div className="card-img-v2" style={{ backgroundImage: `url(${product.image})` }}></div>
+        <div className="card-img-wrapper-v2">
+            <img src={product.image} alt={product.name} loading="lazy" />
+        </div>
         <div className="card-body-v2">
             <h3>{product.name}</h3>
             <div className="card-price-v2">{product.price}<span>€/{product.period}</span></div>
