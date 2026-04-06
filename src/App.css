@@ -190,7 +190,7 @@ body {
     box-shadow: 0 20px 50px rgba(0,0,0,0.03);
     border: 1px solid #f0f0f0;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden removed to show badge */
 }
 
 .p-card-img {
@@ -198,26 +198,32 @@ body {
     background-size: cover;
     background-position: center;
     width: 100%;
-}
-
-.p-card-header, .p-card-body {
-    padding: 30px 40px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    overflow: hidden; /* Only image is clipped */
 }
 
 .p-card-premium.is-featured {
-    border: 3px solid var(--secondary);
+    border: 2px solid var(--secondary);
     transform: scale(1.05);
 }
 
 .p-card-badge {
     position: absolute;
     top: -15px;
-    left: 45px;
+    left: 40px;
     background: var(--secondary);
     color: white;
-    padding: 8px 15px;
-    font-size: 0.75rem;
+    padding: 8px 20px;
+    font-size: 0.7rem;
     font-weight: 900;
+    border-radius: 4px;
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+    z-index: 10;
+}
+
+.p-card-header, .p-card-body {
+    padding: 30px 40px;
 }
 
 .p-card-header h3 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 800; }

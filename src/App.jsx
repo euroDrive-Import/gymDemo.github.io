@@ -24,7 +24,7 @@ const PRODUCTS = [
         featured: true,
         description: "Nutrición + Entrenamiento con soporte prioritario y ajustes ilimitados.",
         features: ["Plan Nutricional + Entrenamiento", "Revisiones cada 14 días", "Ajustes ilimitados", "Respuesta < 24h", "Regalo: Guía Suplementación"],
-        image: "https://images.unsplash.com/photo-1541534401781-b9cc67d87d78?w=800"
+        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800"
     },
     { 
         id: 'p4', name: "Team Competición", price: "149.00",
