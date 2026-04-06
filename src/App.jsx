@@ -30,7 +30,7 @@ const PRODUCTS = [
         id: 'p4', name: "Team Competición", price: "149.00",
         description: "Entrenamiento avanzado, posing, mindset y preparación específica.",
         features: ["Entrenamiento avanzado", "Posing técnico", "Asesoramiento estética", "Mindset y motivación", "Seguimiento continuo"],
-        image: "https://images.unsplash.com/photo-1620188467120-093a100344bb?w=800"
+        image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800"
     }
 ];
 
@@ -241,7 +241,7 @@ function App() {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => addToCart(p)}
                   >
-                    MÁS INFORMACIÓN
+                    AÑADIR PLAN
                   </motion.button>
                 </div>
               </motion.div>
