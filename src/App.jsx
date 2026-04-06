@@ -112,11 +112,11 @@ function App() {
         </AnimatedSection>
 
         {/* VIDEO / ABOUT TEASER */}
-        <AnimatedSection className="section bg-dark text-white video-section">
+        <AnimatedSection className="section bg-warm-alternate video-section">
             <div className="container grid-2-center">
                 <div className="video-blob-container">
                     <div className="video-ring"></div>
-                    <div className="video-inner"><Play size={60} fill="white" /></div>
+                    <div className="video-inner"><Play size={60} fill="#c5a021" /></div>
                 </div>
                 <div className="teaser-text">
                     <h6 className="gold-label">SOBRE EL MÉTODO</h6>
