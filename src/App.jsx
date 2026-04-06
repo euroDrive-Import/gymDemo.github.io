@@ -2,51 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { 
     ShoppingCart, Menu, X, Plus, Trash2, Check, 
     Instagram, Phone, Mail, Play, Download, Gift, ArrowRight, Star, 
-    BookOpen, User, ShoppingBag, Home, ChevronRight
+    ChevronRight, CreditCard, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import './App.css';
 
 const BRAND_NAME = "ELITE FITNESS";
+const GENERIC_PHONE = "+34 000 000 000";
 
 const PRODUCTS = [
-    { 
-        id: 'p1', name: "Plan OnlyDiet", price: "49.00", 
-        features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Asesoramiento suplementación", "Soporte exclusivo", "Recetario mensual"],
-        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
-        type: 'plan'
-    },
-    { 
-        id: 'p2', name: "Plan Workout", price: "59.00", 
-        features: ["Entrenamiento personalizado", "Rutinas adaptadas", "Revisiones mensuales", "Asesoramiento profesional", "Hogar / Gym"],
-        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
-        type: 'plan'
-    },
-    { 
-        id: 'p3', name: "Plan Full Fit", price: "99.00", featured: true,
-        features: ["Nutrición + Entrenamiento", "Revisiones cada 14 días", "Ajustes ilimitados", "Respuesta < 24h", "Regalo: Guía Suplementación"],
-        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800",
-        type: 'plan'
-    },
-    { 
-        id: 'p4', name: "Team Pro", price: "149.00",
-        features: ["Entrenamiento avanzado", "Posing técnico", "Mindset y motivación", "Seguimiento continuo", "Preparación específica"],
-        image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800",
-        type: 'plan'
-    },
-    {
-        id: 'p5', name: "Guía Suplementación PDF", price: "19.99",
-        features: ["PDF Descargable", "Top Suplementos", "Dosis recomendadas"],
-        image: "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=800",
-        type: 'digital'
-    }
+    { id: 'p1', name: "Plan OnlyDiet", price: "49.00", image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800", features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Recetario mensual"] },
+    { id: 'p2', name: "Plan Workout", price: "59.00", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800", features: ["Entrenamiento personalizado", "Rutinas hogar/gym", "Revisiones mensuales"] },
+    { id: 'p3', name: "Plan Full Fit", price: "99.00", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800", featured: true, features: ["Nutrición + Entrenamiento", "Revisiones quincenales", "Ajustes ilimitados"] },
+    { id: 'p4', name: "Team Pro", price: "149.00", image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800", features: ["Entrenamiento avanzado", "Posing técnico", "Mindset y seguimiento"] }
 ];
 
-const BLOG_POSTS = [
-    { id: 1, title: "5 errores comunes en tu dieta", date: "12 Abr, 2026", excerpt: "Aprende por qué no estás perdiendo peso a pesar de comer sano...", img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600" },
-    { id: 2, title: "La importancia del descanso", date: "08 Abr, 2026", excerpt: "El músculo no crece en el gimnasio, crece mientras duermes...", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600" },
-    { id: 3, title: "Entrenamiento en casa eficiente", date: "02 Abr, 2026", excerpt: "No necesitas grandes máquinas para transformar tu cuerpo...", img: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600" }
+const BLOG_SAMPLES = [
+    { title: "Entrenar en ayunas: ¿Sí o no?", date: "15 Abr, 2026", img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600" },
+    { title: "Mitos sobre los carbohidratos", date: "10 Abr, 2026", img: "https://images.unsplash.com/photo-1548690312-e3b507d17a47?w=600" }
 ];
+
+const AnimatedSection = ({ children, className, id }) => (
+    <motion.section 
+        id={id} className={className}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: "easeOut" }}
+    >
+        {children}
+    </motion.section>
+);
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -63,7 +49,7 @@ function App() {
     localStorage.setItem('cart', JSON.stringify(cart));
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    window.scrollTo(0, 0); // Reset scroll on page change
+    if (currentPage !== 'home') window.scrollTo(0, 0);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [cart, currentPage]);
 
@@ -80,240 +66,251 @@ function App() {
 
   const cartTotal = cart.reduce((acc, item) => acc + parseFloat(item.price), 0);
 
-  const handleCheckoutSubmit = (e) => {
-    e.preventDefault();
-    alert('¡Procesando pago seguro! Redirigiendo...');
-    setCart([]);
-    setIsCheckoutOpen(false);
-  };
-
-  // Components for each "page"
-  const HomeView = () => (
+  // VIEWS
+  const Home = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <section className="hero-premium">
-        <div className="hero-bg" />
-        <div className="hero-gradient"></div>
+        {/* HERO WOW */}
+        <section className="hero-wow">
+            <motion.div className="hero-parallax-bg" initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }} />
+            <div className="hero-glass-overlay"></div>
+            <div className="container hero-container">
+                <motion.div className="hero-content-box" initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 1 }}>
+                    <h6 className="hero-badge">PENTACAMPEÓN NACIONAL & COACH DE ÉLITE</h6>
+                    <h1 className="hero-mega-title">Transforma tu<br/><span className="gold-text-glow">Realidad.</span></h1>
+                    <p className="hero-para">No vendemos planes, vendemos nuevas identidades. Sistema de entrenamiento y nutrición avanzado para resultados fuera de lo común.</p>
+                    <div className="hero-cta-group">
+                        <button className="btn-main-gold" onClick={() => setCurrentPage('shop')}>MI TIENDA ELITE <ArrowRight size={20} /></button>
+                        <button className="btn-main-outline" onClick={() => setCurrentPage('about')}>CONÓCEME</button>
+                    </div>
+                </motion.div>
+            </div>
+            <div className="scroll-indicator"><div className="mouse"><div className="wheel"></div></div></div>
+        </section>
+
+        {/* RESULTS MARQUEE WOW */}
+        <section className="marquee-results">
+            <div className="marquee-content">
+                {[1,2,3,4,5,6].map(i => (
+                    <div key={i} className="result-slide"><div className="res-img-placeholder" /></div>
+                ))}
+            </div>
+        </section>
+
+        {/* PLANES PREMIUM */}
+        <AnimatedSection className="section planes-section">
+            <div className="container">
+                <div className="section-head-center">
+                    <h6 className="gold-label">EL ESTÁNDAR</h6>
+                    <h2 className="title-huge">Escogidos por los mejores</h2>
+                </div>
+                <div className="p-grid-wow">
+                    {PRODUCTS.map((p, idx) => (
+                        <ProductCard key={p.id} product={p} addToCart={addToCart} index={idx} />
+                    ))}
+                </div>
+            </div>
+        </AnimatedSection>
+
+        {/* VIDEO / ABOUT TEASER */}
+        <AnimatedSection className="section bg-dark text-white video-section">
+            <div className="container grid-2-center">
+                <div className="video-blob-container">
+                    <div className="video-ring"></div>
+                    <div className="video-inner"><Play size={60} fill="white" /></div>
+                </div>
+                <div className="teaser-text">
+                    <h6 className="gold-label">SOBRE EL MÉTODO</h6>
+                    <h2 className="title-mega">Más que un entrenamiento</h2>
+                    <p className="p-mega">Utilizamos biohacking, nutrición ortomolecular y periodización avanzada para que tu cuerpo rinda al 200%. Sin excusas, sin dietas milagro.</p>
+                    <button className="btn-main-outline" onClick={() => setCurrentPage('about')}>MÁS SOBRE MÍ</button>
+                </div>
+            </div>
+        </AnimatedSection>
+    </motion.div>
+  );
+
+  const About = () => (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="page-view-premium">
         <div className="container">
-          <div className="hero-wrapper">
-            <h6 className="hero-subtitle">MÁS QUE FITNESS: ES TU TRANSFORMACIÓN</h6>
-            <h1 className="hero-title">{BRAND_NAME}<br/><span className="gold-text italic">Premium Coaching</span></h1>
-            <p className="hero-description">Libera tu mejor versión con asesoramiento de élite adaptado a tu estilo de vida.</p>
-            <div className="hero-btns">
-              <button className="btn-premium gold" onClick={() => setCurrentPage('shop')}>EMPEZAR AHORA <ArrowRight size={18} /></button>
-              <button className="btn-premium outline" onClick={() => setCurrentPage('about')}>MI MÉTODO</button>
+            <div className="about-detailed-grid">
+                <div className="img-stack">
+                    <div className="img-main" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1548690312-e3b507d17a47?w=1200)' }}></div>
+                    <div className="img-sub gold-border"></div>
+                </div>
+                <div className="text-stack">
+                    <h2 className="title-mega">ELITE<br/><span className="gold-text">DEVELOPMENT</span></h2>
+                    <p className="p-gold-intro">Acompaño a personas exigentes que buscan su máximo potencial físico y mental.</p>
+                    <p className="p-normal">He dedicado mi vida a entender la fisiología humana aplicada al rendimiento y la estética. Mi método no es para todos, es para quienes están listos para invertir en sí mismos.</p>
+                    <div className="stats-row">
+                        <div className="stat"><h3>+500</h3><p>Alumnos</p></div>
+                        <div className="stat"><h3>10</h3><p>Años Experiencia</p></div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </section>
-
-      <section className="section bg-light">
-        <div className="container text-center">
-            <h6 className="gold-text">PLANES DESTACADOS</h6>
-            <h2 className="section-title">Elige tu objetivo</h2>
-            <div className="planes-grid-premium">
-              {PRODUCTS.filter(p => p.featured).map(p => (
-                <ProductCard key={p.id} product={p} addToCart={addToCart} />
-              ))}
-            </div>
-            <button className="btn-premium outline mt-10" onClick={() => setCurrentPage('shop')}>VER TODOS LOS PLANES</button>
-        </div>
-      </section>
     </motion.div>
   );
 
-  const AboutView = () => (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="page-padding">
-      <div className="container">
-        <div className="about-grid">
-          <div className="about-image" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1548690312-e3b507d17a47?w=800)' }} />
-          <div className="about-text">
-            <h6 className="gold-text">SOBRE MÍ</h6>
-            <h2 className="title-premium">Mi misión es tu éxito</h2>
-            <p className="p-desc">Con más de 10 años en el mundo del fitness de competición y el coaching nutricional, he ayudado a cientos de personas a encontrar el equilibrio entre salud y estética.</p>
-            <div className="values-list">
-              <div className="val-item"><Check className="gold" /> <span>Resultados reales sin dietas extremas.</span></div>
-              <div className="val-item"><Check className="gold" /> <span>Entrenamientos basados en ciencia.</span></div>
-              <div className="val-item"><Check className="gold" /> <span>Soporte 24/7 y motivación constante.</span></div>
+  const Shop = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-view-premium">
+        <div className="container">
+            <h2 className="title-huge text-center mb-20">Elite <span className="gold-text">Store</span></h2>
+            <div className="p-grid-wow">
+                {PRODUCTS.map((p, idx) => <ProductCard key={p.id} product={p} addToCart={addToCart} index={idx} />)}
             </div>
-            <div className="cta-box-mini">
-                <Play fill="#d4af37" className="gold" /> <span>Ver video de mi método</span>
-            </div>
-          </div>
         </div>
-      </div>
     </motion.div>
   );
 
-  const ShopView = () => (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-padding">
-      <div className="container">
-        <h2 className="title-premium text-center mb-20">Tienda Elite</h2>
-        <div className="planes-grid-premium">
-          {PRODUCTS.map(p => <ProductCard key={p.id} product={p} addToCart={addToCart} />)}
-        </div>
-      </div>
-    </motion.div>
-  );
-
-  const BlogView = () => (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-padding">
-      <div className="container">
-        <h2 className="title-premium text-center mb-20">Blog & Consejos</h2>
-        <div className="blog-grid">
-          {BLOG_POSTS.map(post => (
-            <div key={post.id} className="blog-card">
-              <div className="blog-img" style={{ backgroundImage: `url(${post.img})` }} />
-              <div className="blog-body">
-                <span className="blog-date">{post.date}</span>
-                <h3>{post.title}</h3>
-                <p>{post.excerpt}</p>
-                <div className="blog-link">Leer más <ChevronRight size={16} /></div>
-              </div>
+  const Blog = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-view-premium">
+        <div className="container">
+            <h2 className="title-huge text-center mb-20">Elite <span className="gold-text">Journal</span></h2>
+            <div className="p-grid-wow">
+                {BLOG_SAMPLES.map((post, idx) => (
+                    <div key={idx} className="blog-card-v2">
+                        <div className="bc-img" style={{ backgroundImage: `url(${post.img})` }}></div>
+                        <div className="bc-body">
+                            <span className="bc-date">{post.date}</span>
+                            <h3>{post.title}</h3>
+                            <button className="bc-btn">LEER MÁS <ChevronRight size={14}/></button>
+                        </div>
+                    </div>
+                ))}
             </div>
-          ))}
         </div>
-      </div>
     </motion.div>
   );
 
   return (
-    <div className="App premium">
-      <motion.div className="scroll-progress" style={{ scaleX }} />
+    <div className="App premium-elite">
+      <motion.div className="top-progress" style={{ scaleX }} />
 
-      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-        <div className="container">
-          <div className="logo" onClick={() => setCurrentPage('home')}>
-            <a href="#">{BRAND_NAME}</a>
-          </div>
-          
-          <div className="nav-group">
-            <div className="nav-links">
-                {['INICIO', 'SOBRE MÍ', 'TIENDA', 'BLOG'].map((item) => (
-                    <a 
-                        key={item} 
-                        href="#"
-                        className={currentPage === item.toLowerCase().replace(' ', '-') ? 'active' : ''}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            const page = item === 'INICIO' ? 'home' : item.toLowerCase().replace(' ', '-');
-                            setCurrentPage(page);
-                            setIsMenuOpen(false);
-                        }}
-                    >
-                        {item}
-                    </a>
+      <nav className={`nav-v2 ${isScrolled ? 'nav-scrolled' : ''}`}>
+        <div className="container nav-container">
+            <div className="brand-logo" onClick={() => setCurrentPage('home')}>ELITE<span>FITNESS</span></div>
+            <div className="nav-links-v2">
+                {[{id:'home', l:'INICIO'}, {id:'about', l:'SOBRE MÍ'}, {id:'shop', l:'TIENDA'}, {id:'blog', l:'BLOG'}].map(p => (
+                    <a key={p.id} href="#" className={currentPage === p.id ? 'active' : ''} onClick={(e) => {e.preventDefault(); setCurrentPage(p.id)}}>{p.l}</a>
                 ))}
             </div>
-            
-            <div className="nav-utility">
-                <div className="cart-trigger" onClick={() => setIsCartOpen(true)}>
-                    <ShoppingCart size={22} />
-                    {cart.length > 0 && <span className="cart-badge">{cart.length}</span>}
+            <div className="nav-actions-v2">
+                <div className="cart-v2" onClick={() => setIsCartOpen(true)}>
+                    <ShoppingCart size={22} /><span className="badge-v2">{cart.length}</span>
                 </div>
-                <Menu className="mobile-menu-btn" size={24} onClick={() => setIsMenuOpen(true)} />
+                <button className="hamburguer" onClick={() => setIsMenuOpen(!isMenuOpen)}><Menu /></button>
             </div>
-          </div>
         </div>
       </nav>
 
       <AnimatePresence mode="wait">
-        {currentPage === 'home' && <HomeView key="home" />}
-        {currentPage === 'sobre-mí' && <AboutView key="about" />}
-        {currentPage === 'tienda' && <ShopView key="shop" />}
-        {currentPage === 'blog' && <BlogView key="blog" />}
+        {currentPage === 'home' && <Home key="home" />}
+        {currentPage === 'about' && <About key="about" />}
+        {currentPage === 'shop' && <Shop key="shop" />}
+        {currentPage === 'blog' && <Blog key="blog" />}
       </AnimatePresence>
 
-      <Footer setCurrentPage={setCurrentPage} />
+      {/* FOOTER RICH */}
+      <footer className="footer-rich">
+        <div className="container footer-grid-rich">
+            <div className="f-col-logo">
+                <h2>ELITE<span>FITNESS</span></h2>
+                <p>El estándar más sofisticado en transformación humana.</p>
+                <div className="f-socials">
+                    <Instagram size={20} /><Mail size={20} />
+                </div>
+            </div>
+            <div className="f-col-links">
+                <h4>ESTRUCTURA</h4>
+                <a href="#" onClick={() => setCurrentPage('home')}>Incio</a>
+                <a href="#" onClick={() => setCurrentPage('about')}>Sobre Mí</a>
+                <a href="#" onClick={() => setCurrentPage('shop')}>Tienda</a>
+            </div>
+            <div className="f-col-contact">
+                <h4>CONTACTO</h4>
+                <p><Phone size={14} /> {GENERIC_PHONE}</p>
+                <p><Mail size={14} /> info@elitedemo.com</p>
+                <div className="payment-icons-footer grayscale">
+                    <CreditCard size={30} /> <Gift size={30} />
+                </div>
+            </div>
+        </div>
+        <div className="footer-bottom-rich">© 2026 {BRAND_NAME} • DESIGNED FOR PERFORMANCE</div>
+      </footer>
 
-      {/* Overlays (Cart, Checkout) */}
+      {/* OVERLAYS */}
       <AnimatePresence>
-        {isCartOpen && <CartDrawer cart={cart} setIsCartOpen={setIsCartOpen} removeFromCart={removeFromCart} cartTotal={cartTotal} setIsCheckoutOpen={setIsCheckoutOpen} />}
-        {isCheckoutOpen && <CheckoutModal cartTotal={cartTotal} setIsCheckoutOpen={setIsCheckoutOpen} handleCheckoutSubmit={handleCheckoutSubmit} paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />}
+        {isCartOpen && <SidebarCart cart={cart} close={() => setIsCartOpen(false)} total={cartTotal} remove={removeFromCart} checkout={() => {setIsCartOpen(false); setIsCheckoutOpen(true)}} />}
+        {isCheckoutOpen && <StripeCheckout total={cartTotal} close={() => setIsCheckoutOpen(false)} method={paymentMethod} setMethod={setPaymentMethod} />}
       </AnimatePresence>
     </div>
   );
 }
 
-const ProductCard = ({ product, addToCart }) => (
-  <motion.div className={`p-card-premium ${product.featured ? 'is-featured' : ''}`} whileHover={{ y: -10 }}>
-    {product.featured && <div className="p-card-badge">MÁS POPULAR</div>}
-    <div className="p-card-img" style={{ backgroundImage: `url(${product.image})` }} />
-    <div className="p-card-header">
-      <h3>{product.name}</h3>
-      <div className="p-card-price">{product.price}<span>€{product.type === 'plan' ? '/mes' : ''}</span></div>
-    </div>
-    <div className="p-card-body">
-      <ul className="p-feature-list">
-        {product.features.map((f, i) => <li key={i}><Check size={14} /> {f}</li>)}
-      </ul>
-      <button className="p-card-btn" onClick={() => addToCart(product)}>AÑADIR AL CARRITO</button>
-    </div>
-  </motion.div>
+const ProductCard = ({ product, addToCart, index }) => (
+    <motion.div 
+        className={`card-v2 ${product.featured ? 'card-featured' : ''}`}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.1 }}
+    >
+        {product.featured && <div className="card-tag">TOP ELITE</div>}
+        <div className="card-img-v2" style={{ backgroundImage: `url(${product.image})` }}></div>
+        <div className="card-body-v2">
+            <h3>{product.name}</h3>
+            <div className="card-price-v2">{product.price}<span>€/sesión</span></div>
+            <ul className="card-list-v2">
+                {product.features.map((f, i) => <li key={i}><Check size={14} className="gold" /> {f}</li>)}
+            </ul>
+            <button className="btn-card-elite" onClick={() => addToCart(product)}>ADQUIRIR PLAN</button>
+        </div>
+    </motion.div>
 );
 
-const CartDrawer = ({ cart, setIsCartOpen, removeFromCart, cartTotal, setIsCheckoutOpen }) => (
+const SidebarCart = ({ cart, close, total, remove, checkout }) => (
     <>
-        <motion.div className="premium-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCartOpen(false)} />
-        <motion.div className="premium-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}>
-            <div className="drawer-header"><h2>TU CARRITO</h2><X onClick={() => setIsCartOpen(false)} className="cursor-pointer" /></div>
-            <div className="drawer-content">
-                {cart.length === 0 ? <p className="text-center opacity-50 mt-10">Vacío</p> : cart.map((item, i) => (
-                    <div key={i} className="drawer-item">
-                        <div className="drawer-item-img" style={{ backgroundImage: `url(${item.image})` }} />
-                        <div className="drawer-item-info"><h4>{item.name}</h4><p className="gold-text">{item.price}€</p></div>
-                        <X size={16} onClick={() => removeFromCart(i)} className="drawer-item-del" />
+        <motion.div className="overlay-blur-wow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close} />
+        <motion.div className="drawer-wow" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%', transition: { duration: 0.5 } }}>
+            <div className="drawer-h"><h3>CARRITO ELITE</h3><X onClick={close} className="cursor-pointer" /></div>
+            <div className="drawer-b">
+                {cart.length === 0 ? <div className="empty-wow"><ShoppingBag size={80} strokeWidth={0.5} /> <p>Vuelve a la tienda para añadir planes.</p></div> : cart.map((item, i) => (
+                    <div key={i} className="cart-item-v2">
+                        <div className="ci-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                        <div className="ci-info"><h4>{item.name}</h4><p>{item.price}€</p></div>
+                        <Trash2 className="ci-del" size={16} onClick={() => remove(i)} />
                     </div>
                 ))}
             </div>
             {cart.length > 0 && (
-                <div className="drawer-footer">
-                    <div className="drawer-total"><span>TOTAL</span><span>{cartTotal.toFixed(2)}€</span></div>
-                    <button className="btn-checkout-premium" onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}>FINALIZAR PEDIDO</button>
+                <div className="drawer-f">
+                    <div className="df-total"><span>TOTAL INVERSIÓN</span><span>{total.toFixed(2)}€</span></div>
+                    <button className="btn-checkout-v2" onClick={checkout}>FINALIZAR PAGO SEGURO</button>
                 </div>
             )}
         </motion.div>
     </>
 );
 
-const CheckoutModal = ({ cartTotal, setIsCheckoutOpen, handleCheckoutSubmit, paymentMethod, setPaymentMethod }) => (
-    <div className="checkout-modal-container">
-        <motion.div className="checkout-modal-content" initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-            <button className="close-checkout" onClick={() => setIsCheckoutOpen(false)}><X /></button>
-            <div className="checkout-form-side">
-                <h2>Pago Seguro</h2>
-                <form onSubmit={handleCheckoutSubmit}>
-                    <div className="f-group"><label>Email</label><input type="email" required /></div>
-                    <div className="payment-selector">
-                        <div className={`p-method ${paymentMethod === 'card' ? 'active' : ''}`} onClick={() => setPaymentMethod('card')}>Tarjeta</div>
-                        <div className={`p-method ${paymentMethod === 'paypal' ? 'active' : ''}`} onClick={() => setPaymentMethod('paypal')}>PayPal</div>
-                    </div>
-                    {paymentMethod === 'card' && <div className="card-fields"><input type="text" placeholder="Card Number" className="card-input" required /></div>}
-                    <button type="submit" className="btn-pay-now">PAGAR {cartTotal.toFixed(2)}€</button>
-                </form>
+const StripeCheckout = ({ total, close, method, setMethod }) => (
+    <div className="stripe-container">
+        <motion.div className="stripe-modal" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+            <button className="s-close" onClick={close}><X /></button>
+            <h2>Finalizar Pago</h2>
+            <div className="s-methods">
+                <div className={`sm ${method === 'card' ? 'active' : ''}`} onClick={() => setMethod('card')}>Tarjeta Crédito</div>
+                <div className={`sm ${method === 'paypal' ? 'active' : ''}`} onClick={() => setMethod('paypal')}>PayPal</div>
             </div>
+            <input type="email" placeholder="Email de contacto" className="s-input" />
+            {method === 'card' && (
+                <div className="s-card-meta">
+                    <input type="text" placeholder="Número de tarjeta" className="s-input" />
+                    <div className="flex-row gap-2"><input type="text" placeholder="MM/YY" className="s-input" /><input type="text" placeholder="CVC" className="s-input" /></div>
+                </div>
+            )}
+            <button className="s-pay-btn">PAGAR {total.toFixed(2)}€</button>
+            <div className="s-secure"><ShieldCheck size={14} /> Pago seguro cifrado SSL 256 bits</div>
         </motion.div>
     </div>
-);
-
-const Footer = ({ setCurrentPage }) => (
-    <footer className="footer-premium">
-        <div className="container">
-            <div className="footer-top">
-                <div className="f-item-brand"><h2>{BRAND_NAME}</h2><p>Estándar de élite en transformación física.</p></div>
-                <div className="f-item-links">
-                    <a href="#" onClick={() => setCurrentPage('sobre-mí')}>Sobre Mí</a>
-                    <a href="#" onClick={() => setCurrentPage('tienda')}>Tienda</a>
-                    <a href="#" onClick={() => setCurrentPage('blog')}>Blog</a>
-                </div>
-                <div className="f-item-social">
-                    <a href="#"><Instagram size={20} /></a>
-                    <a href="tel:+34000000000"><Phone size={20} /></a>
-                    <span className="opacity-50">+34 000 000 000</span>
-                </div>
-            </div>
-            <div className="footer-base">&copy; 2026 {BRAND_NAME} • DEMO PROFESIONAL</div>
-        </div>
-    </footer>
 );
 
 export default App;
