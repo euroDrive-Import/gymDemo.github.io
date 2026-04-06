@@ -8,29 +8,29 @@ import './App.css';
 
 const PRODUCTS = [
     { 
-        id: 'p1', name: "Plan OnlyDiet", price: "49.99", 
+        id: 'p1', name: "Plan OnlyDiet", price: "49.00", 
         description: "Plan nutricional personalizado, revisiones cada 14 días, recetario saludable.",
-        features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Asesoramiento suplementación", "Soporte WhatsApp", "Recetario saludable"],
-        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+        features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Asesoramiento suplementación", "Soporte exclusivo", "Recetario saludable"],
+        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800"
     },
     { 
-        id: 'p2', name: "Plan Workout", price: "59.99", 
+        id: 'p2', name: "Plan Workout", price: "59.00", 
         description: "Rutinas adaptadas a tu nivel, hogar o gym, revisiones mensuales.",
         features: ["Entrenamiento personalizado", "Rutinas adaptadas", "Revisiones mensuales", "Asesoramiento suplementación", "Hogar / Gym"],
-        image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800"
+        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800"
     },
     { 
-        id: 'p3', name: "Plan Full Fit", price: "89.99", 
+        id: 'p3', name: "Plan Full Fit", price: "99.00", 
         featured: true,
         description: "Nutrición + Entrenamiento con soporte prioritario y ajustes ilimitados.",
-        features: ["Plan Nutricional + Entrenamiento", "Revisiones cada 14 días", "Ajustes ilimitados", "Respuesta < 24h", "Descuentos especiales"],
-        image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800"
+        features: ["Plan Nutricional + Entrenamiento", "Revisiones cada 14 días", "Ajustes ilimitados", "Respuesta < 24h", "Regalo: Guía Suplementación"],
+        image: "https://images.unsplash.com/photo-1541534401781-b9cc67d87d78?w=800"
     },
     { 
-        id: 'p4', name: "Team Competición", price: "149.99",
+        id: 'p4', name: "Team Competición", price: "149.00",
         description: "Entrenamiento avanzado, posing, mindset y preparación específica.",
         features: ["Entrenamiento avanzado", "Posing técnico", "Asesoramiento estética", "Mindset y motivación", "Seguimiento continuo"],
-        image: "https://images.unsplash.com/photo-1583454110551-21f2fa2ec617?w=800"
+        image: "https://images.unsplash.com/photo-1620188467120-093a100344bb?w=800"
     }
 ];
 
@@ -55,6 +55,8 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' or 'paypal'
   const { scrollYProgress } = useScroll();
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
@@ -78,12 +80,11 @@ function App() {
 
   const cartTotal = cart.reduce((acc, item) => acc + parseFloat(item.price), 0);
 
-  const handleWhatsAppCheckout = () => {
-    if (cart.length === 0) return;
-    const message = `🌟 Hola Paulette! Quiero transformar mi vida. Estos son los planes que he elegido:\n\n` + 
-                    cart.map(item => `✅ ${item.name} (${item.price}€)`).join('\n') + 
-                    `\n\n💰 Total: ${cartTotal.toFixed(2)}€\n\n¿Podemos empezar hoy? 🚀`;
-    window.open(`https://wa.me/34635303875?text=${encodeURIComponent(message)}`, '_blank');
+  const handleCheckoutSubmit = (e) => {
+    e.preventDefault();
+    alert('¡Procesando pago seguro! Serás redirigido a la pasarela bancaria.');
+    setCart([]);
+    setIsCheckoutOpen(false);
   };
 
   return (
@@ -225,9 +226,10 @@ function App() {
                   viewport={{ once: true }}
               >
                 {p.featured && <div className="p-card-badge">TOP VENTAS</div>}
+                <div className="p-card-img" style={{ backgroundImage: `url(${p.image})` }} />
                 <div className="p-card-header">
                   <h3>{p.name}</h3>
-                  <div className="p-card-price">{p.price}<span>€</span></div>
+                  <div className="p-card-price">{p.price}<span>€/mes</span></div>
                 </div>
                 <div className="p-card-body">
                   <ul className="p-feature-list">
@@ -239,7 +241,7 @@ function App() {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => addToCart(p)}
                   >
-                    CONTRATAR AHORA
+                    MÁS INFORMACIÓN
                   </motion.button>
                 </div>
               </motion.div>
@@ -336,13 +338,74 @@ function App() {
                   <span>TOTAL</span>
                   <span>{cartTotal.toFixed(2)}€</span>
                 </div>
-                <button className="btn-checkout-premium" onClick={handleWhatsAppCheckout}>
-                    RESERVAR POR WHATSAPP
+                <button className="btn-checkout-premium" onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}>
+                    FINALIZAR PEDIDO
                 </button>
               </div>
             </motion.div>
           </>
         )}
+      </AnimatePresence>
+
+      {/* Modern Checkout Modal (Stripe/PayPal) */}
+      <AnimatePresence>
+          {isCheckoutOpen && (
+              <div className="checkout-modal-container">
+                  <motion.div 
+                    className="checkout-modal-content"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
+                  >
+                      <button className="close-checkout" onClick={() => setIsCheckoutOpen(false)}><X /></button>
+                      
+                      <div className="checkout-grid">
+                          <div className="checkout-form-side">
+                              <h2>Finalizar Compra</h2>
+                              <form onSubmit={handleCheckoutSubmit}>
+                                  <div className="f-row">
+                                      <div className="f-group"><label>Email</label><input type="email" placeholder="tu@email.com" required /></div>
+                                  </div>
+                                  
+                                  <div className="payment-selector">
+                                      <div 
+                                        className={`p-method ${paymentMethod === 'card' ? 'active' : ''}`}
+                                        onClick={() => setPaymentMethod('card')}
+                                      >
+                                          <span>💳 Tarjeta</span>
+                                      </div>
+                                      <div 
+                                        className={`p-method ${paymentMethod === 'paypal' ? 'active' : ''}`}
+                                        onClick={() => setPaymentMethod('paypal')}
+                                      >
+                                          <span>🅿️ PayPal</span>
+                                      </div>
+                                  </div>
+
+                                  {paymentMethod === 'card' ? (
+                                      <div className="card-fields animate-in">
+                                          <input type="text" placeholder="Número de tarjeta" className="card-input" required />
+                                          <div className="flex gap-2">
+                                              <input type="text" placeholder="MM/YY" className="card-input" required />
+                                              <input type="text" placeholder="CVC" className="card-input" required />
+                                          </div>
+                                      </div>
+                                  ) : (
+                                      <div className="paypal-notice animate-in">
+                                          <p>Serás redirigido a PayPal para completar el pago de forma segura.</p>
+                                      </div>
+                                  )}
+
+                                  <button type="submit" className="btn-pay-now">
+                                      PAGAR {cartTotal.toFixed(2)}€
+                                  </button>
+                                  <p className="secure-p"><Check size={12} /> Pago seguro cifrado con SSL 256-bit</p>
+                              </form>
+                          </div>
+                      </div>
+                  </motion.div>
+              </div>
+          )}
       </AnimatePresence>
 
       {/* Footer Minimalista & Elegante */}
