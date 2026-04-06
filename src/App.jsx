@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
     ShoppingCart, Menu, X, Plus, Trash2, Check, 
-    Instagram, Phone, Mail, CircleHelp, Play, Download, Gift
+    Instagram, Phone, Mail, Play, Download, Gift, ArrowRight, Star
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import './App.css';
 
 const PRODUCTS = [
@@ -34,13 +34,34 @@ const PRODUCTS = [
     }
 ];
 
+const AnimatedSection = ({ children, className, id }) => {
+    return (
+        <motion.section 
+            id={id}
+            className={className}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+            {children}
+        </motion.section>
+    );
+};
+
 function App() {
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [cart]);
 
   const addToCart = (product) => {
@@ -58,209 +79,289 @@ function App() {
 
   const handleWhatsAppCheckout = () => {
     if (cart.length === 0) return;
-    
-    const message = `Hola Paulette! Me gustaría contratar los siguientes planes:\n\n` + 
-                    cart.map(item => `- ${item.name} (${item.price}€)`).join('\n') + 
-                    `\n\nTotal: ${cartTotal.toFixed(2)}€\n\n¿Me podrías dar los pasos para empezar?`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/34635303875?text=${encodedMessage}`, '_blank');
+    const message = `🌟 Hola Paulette! Quiero transformar mi vida. Estos son los planes que he elegido:\n\n` + 
+                    cart.map(item => `✅ ${item.name} (${item.price}€)`).join('\n') + 
+                    `\n\n💰 Total: ${cartTotal.toFixed(2)}€\n\n¿Podemos empezar hoy? 🚀`;
+    window.open(`https://wa.me/34635303875?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
-    <div className="App">
-      {/* Navbar */}
-      <header className="navbar">
-        <div className="container">
-          <div className="logo"><a href="#">LA PAULETTE</a></div>
-          <nav className="nav-links">
-            <a href="#planes">PLANES</a>
-            <a href="#sobre-mi">SOBRE MÍ</a>
-            <a href="#tienda">TIENDA</a>
-            <a href="#blog">BLOG</a>
-          </nav>
-          <div className="nav-icons">
-            <div className="cart-btn" onClick={() => setIsCartOpen(true)}>
-              <ShoppingCart size={22} />
-              <span className="cart-count">{cart.length}</span>
-            </div>
-            <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>
-                <Menu size={24} />
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="App premium">
+      {/* Progress Bar */}
+      <motion.div className="scroll-progress" style={{ scaleX }} />
 
-      {/* Hero */}
-      <section className="hero">
-        <div className="hero-overlay"></div>
+      {/* Navbar con Efecto Glassmorphism Profundo */}
+      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container">
           <motion.div 
-              className="hero-content"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1 }}
+            className="logo"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <h6 className="subtitle gold">MI TRABAJO</h6>
-            <h1>Es acompañarte</h1>
-            <p>No se trata solo de cambiar tu cuerpo. Se trata de acompañarte con un plan personalizado que encaje con tu vida y te ayude a recuperar equilibrio, confianza y bienestar.</p>
-            <div className="hero-actions">
-              <a href="#sobre-mi" className="btn solid">CONÓCEME</a>
-              <a href="#planes" className="btn outline">VER PLANES</a>
-            </div>
+            <a href="#">LA PAULETTE</a>
           </motion.div>
+          
+          <div className="nav-group">
+            <div className="nav-links">
+                {['PLANES', 'SOBRE MÍ', 'TIENDA', 'BLOG'].map((item) => (
+                    <motion.a 
+                        key={item} 
+                        href={`#${item.toLowerCase()}`}
+                        whileHover={{ y: -2, color: '#d4af37' }}
+                    >
+                        {item}
+                    </motion.a>
+                ))}
+            </div>
+            
+            <div className="nav-utility">
+                <motion.div 
+                    className="cart-trigger" 
+                    onClick={() => setIsCartOpen(true)}
+                    whileHover={{ scale: 1.1 }}
+                >
+                    <ShoppingCart size={22} />
+                    <AnimatePresence>
+                        {cart.length > 0 && (
+                            <motion.span 
+                                className="cart-badge"
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                exit={{ scale: 0 }}
+                            >
+                                {cart.length}
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+                <Menu className="mobile-menu-btn" size={24} onClick={() => setIsMenuOpen(true)} />
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section con Parallax y Reveal */}
+      <section className="hero-premium">
+        <motion.div 
+            className="hero-bg"
+            initial={{ scale: 1.1, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.5 }}
+        />
+        <div className="hero-gradient"></div>
+        <div className="container">
+          <div className="hero-wrapper">
+            <motion.h6 
+                className="hero-subtitle"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+            >
+                ENTRENADORA PERSONAL & COACH NUTRICIONAL
+            </motion.h6>
+            
+            <motion.div 
+                className="hero-title-container"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 1 }}
+            >
+                <h1 className="hero-title">Tu transformación<br/><span className="gold-text italic">empieza aquí</span></h1>
+            </motion.div>
+
+            <motion.p 
+                className="hero-description"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
+            >
+                Caminos bien hechos, resultados que duran. No es una dieta, es recuperar tu equilibrio, confianza y bienestar.
+            </motion.p>
+
+            <motion.div 
+                className="hero-btns"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+            >
+              <button className="btn-premium gold" onClick={() => document.getElementById('planes').scrollIntoView()}>VER PLANES <ArrowRight size={18} /></button>
+              <button className="btn-premium outline">SOBRE MÍ</button>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Planes Section */}
-      <section id="planes" className="section bg-light">
+      {/* Floating Star Badges */}
+      <div className="floating-badge-container">
+          {[1,2,3].map((_, i) => (
+             <motion.div 
+                key={i} className={`float-badge float-${i}`}
+                animate={{ y: [0, -20, 0] }}
+                transition={{ repeat: Infinity, duration: 3 + i, ease: "easeInOut" }}
+             >
+                <Star className="gold" size={14} fill="#d4af37" />
+             </motion.div>
+          ))}
+      </div>
+
+      {/* Planes Section con Reveal Staggered */}
+      <AnimatedSection id="planes" className="planes-premium section">
         <div className="container">
-          <header className="section-header">
-            <h6 className="subtitle gold">CONOCE</h6>
-            <h2>Nuestros Planes</h2>
-          </header>
+          <div className="section-head text-center">
+            <h6 className="gold-text">ELEGANCIA & PODER</h6>
+            <h2 className="section-title">Elige tu camino</h2>
+          </div>
           
-          <div className="plans-grid">
-            {PRODUCTS.map(p => (
+          <div className="planes-grid-premium">
+            {PRODUCTS.map((p, idx) => (
               <motion.div 
-                  key={p.id} className={`plan-card ${p.featured ? 'featured' : ''}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  key={p.id} 
+                  className={`p-card-premium ${p.featured ? 'is-featured' : ''}`}
+                  whileHover={{ y: -15, boxShadow: '0 30px 60px rgba(0,0,0,0.1)' }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.1 }}
                   viewport={{ once: true }}
               >
-                {p.featured && <div className="badge">MÁS POPULAR</div>}
-                <div className="plan-info">
-                  <h6 className="plan-type">PLAN DE</h6>
-                  <h3>{p.name.split(' ')[1]}</h3>
-                  <div className="p-price-tag">{p.price}€</div>
-                  <ul className="features-list">
-                    {p.features.map((f, i) => <li key={i}><Check size={14} className="gold" /> {f}</li>)}
+                {p.featured && <div className="p-card-badge">TOP VENTAS</div>}
+                <div className="p-card-header">
+                  <h3>{p.name}</h3>
+                  <div className="p-card-price">{p.price}<span>€</span></div>
+                </div>
+                <div className="p-card-body">
+                  <ul className="p-feature-list">
+                    {p.features.map((f, i) => <li key={i}><Check size={16} /> {f}</li>)}
                   </ul>
-                  <button className="btn-buy" onClick={() => addToCart(p)}>AÑADIR AL CARRITO</button>
+                  <motion.button 
+                    className="p-card-btn"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => addToCart(p)}
+                  >
+                    CONTRATAR AHORA
+                  </motion.button>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      {/* Testimonials */}
-      <section className="section results-section">
+      {/* Resultados con Galería Animada */}
+      <AnimatedSection className="results-premium section bg-dark text-white">
         <div className="container text-center">
-            <h2 className="title-large">RESULTADOS REALES EN MUJERES REALES</h2>
-            <p className="p-intro">Lo que más repiten mis clientas no es el peso que pierden. Es cómo cambian su relación con la comida, con su cuerpo y con ellas mismas. Son procesos bien hechos, adaptados a cada mujer y sostenidos en el tiempo.</p>
+            <h2 className="title-premium">Resultados de impacto</h2>
+            <p className="subtitle-premium">No son dietas milagro, son procesos reales sostenibles en el tiempo.</p>
             
-            <div className="results-grid">
-                <div className="result-img before-after-1"></div>
-                <div className="result-img before-after-2"></div>
-            </div>
-
-            <div className="cta-box">
-                <h3>Reserva tu sesión gratuita de valoración conmigo</h3>
-                <p>Hablemos de tu objetivo, de tu situación y de cómo podemos construir un camino que sí funcione para ti.</p>
-                <a href="https://wa.me/34635303875" className="btn-whatsapp"><Phone size={18} /> HABLAR POR WHATSAPP</a>
-            </div>
-        </div>
-      </section>
-
-      {/* Sobre Mi */}
-      <section id="sobre-mi" className="section about-me">
-        <div className="container grid-2">
-            <div className="video-area">
-                <div className="video-thumb">
-                    <Play size={50} fill="white" />
+            <div className="marquee-container">
+                <div className="results-track">
+                    {[1,2,3,4].map((n) => (
+                        <div key={n} className="result-item-card">
+                            <div className="result-img-wrapper" />
+                        </div>
+                    ))}
                 </div>
-                <h2>Sobre mi</h2>
             </div>
-            <div className="guide-area">
-                <h6 className="subtitle gold">REGALO</h6>
-                <h2>Descarga gratis mi guía de suplementación</h2>
-                <p>Descubre qué suplementos realmente funcionan para tu cuerpo y objetivos.</p>
-                <button className="btn-download"><Download size={18} /> DESCARGAR GUÍA</button>
-            </div>
-        </div>
-      </section>
 
-      {/* Gift Cards & Promo */}
-      <section className="section bg-dark text-white">
-        <div className="container grid-2">
-            <div className="promo-card">
-                <Gift className="gold" size={40} />
-                <h6 className="subtitle gold">REGALA SALUD</h6>
-                <h3>Tarjetas de regalo</h3>
-                <p>¿Qué mejor regalo que un extra de motivación? Ayuda a esa persona que siempre dice "El lunes empiezo".</p>
-                <button className="btn-outline-gold">COMPRAR TARJETA</button>
-            </div>
-            <div className="promo-card">
-                <div className="discount-badge">5%</div>
-                <h6 className="subtitle gold">¿ERES NUEVA?</h6>
-                <h3>5% de Descuento</h3>
-                <p>Entrenamiento y nutrición personalizados con acompañamiento cercano a tu ritmo.</p>
-            </div>
+            <motion.div 
+                className="cta-panel-premium"
+                whileHover={{ scale: 1.02 }}
+            >
+                <h3>Transforma tu vida hoy</h3>
+                <p>Reserva tu sesión informativa gratuita conmigo por WhatsApp.</p>
+                <button className="btn-whatsapp-premium" onClick={() => window.open('https://wa.me/34635303875')}>
+                    <Phone size={20} /> CONTACTAR CON PAULETTE
+                </button>
+            </motion.div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      {/* Cart Sidebar */}
+      {/* Cart Drawer Premium con Blur */}
       <AnimatePresence>
         {isCartOpen && (
           <>
-            <motion.div className="cart-overlay-blur" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCartOpen(false)} />
-            <motion.div className="cart-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}>
-              <div className="cart-header-top">
-                <h3>TU CARRITO</h3>
-                <X onClick={() => setIsCartOpen(false)} className="cursor-pointer" />
+            <motion.div 
+                className="premium-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, backdropFilter: 'blur(10px)' }}
+                exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                onClick={() => setIsCartOpen(false)}
+            />
+            <motion.div 
+                className="premium-drawer"
+                initial={{ x: '100%', opacity: 0.5 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0.5 }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            >
+              <div className="drawer-header">
+                <h2>CARRITO</h2>
+                <motion.div whileHover={{ rotate: 90 }} onClick={() => setIsCartOpen(false)}>
+                    <X size={28} className="cursor-pointer" />
+                </motion.div>
               </div>
-              <div className="cart-body">
-                {cart.length === 0 ? <p className="text-center py-10 opacity-50">Tu carrito está vacío</p> : (
+              
+              <div className="drawer-content">
+                {cart.length === 0 ? (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="empty-cart-msg"
+                    >
+                        <ShoppingCart size={60} strokeWidth={1} opacity={0.3} />
+                        <p>Tu selección está vacía.</p>
+                    </motion.div>
+                ) : (
                   cart.map((item, i) => (
-                    <div key={i} className="cart-product">
-                      <div className="cart-prod-img" style={{ backgroundImage: `url(${item.image})` }}></div>
-                      <div className="cart-prod-meta">
+                    <motion.div 
+                        key={i} className="drawer-item"
+                        initial={{ x: 20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                    >
+                      <div className="drawer-item-img" style={{ backgroundImage: `url(${item.image})` }} />
+                      <div className="drawer-item-info">
                         <h4>{item.name}</h4>
-                        <p className="gold font-bold">{item.price}€</p>
+                        <p className="gold-text">{item.price}€</p>
                       </div>
-                      <Trash2 size={16} onClick={() => removeFromCart(i)} className="text-red hover:scale-110 transition-all cursor-pointer" />
-                    </div>
+                      <X size={18} onClick={() => removeFromCart(i)} className="drawer-item-del" />
+                    </motion.div>
                   ))
                 )}
               </div>
-              <div className="cart-footer-bottom">
-                <div className="flex-between mb-4">
-                  <span className="font-bold">TOTAL</span>
-                  <span className="font-bold text-xl">{cartTotal.toFixed(2)}€</span>
+
+              <div className="drawer-footer">
+                <div className="drawer-total">
+                  <span>TOTAL</span>
+                  <span>{cartTotal.toFixed(2)}€</span>
                 </div>
-                <button className="btn-finalize" onClick={handleWhatsAppCheckout}>FINALIZAR POR WHATSAPP</button>
+                <button className="btn-checkout-premium" onClick={handleWhatsAppCheckout}>
+                    RESERVAR POR WHATSAPP
+                </button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Footer */}
-      <footer className="footer-main">
+      {/* Footer Minimalista & Elegante */}
+      <footer className="footer-premium">
         <div className="container">
-            <div className="footer-cols">
-                <div className="f-info">
+            <div className="footer-top">
+                <div className="f-item-brand">
                     <h2 className="logo">LA PAULETTE</h2>
-                    <p>Nutrición y entrenamiento para mujeres de forma personalizada.</p>
+                    <p>Cambiando la relación de la mujer con su cuerpo y la nutrición.</p>
                 </div>
-                <div className="f-links">
-                    <h4>LINKS</h4>
-                    <a href="#">Mi cuenta</a>
-                    <a href="#">Condiciones generales</a>
-                    <a href="#">Privacidad</a>
+                <div className="f-item-links">
+                    {['Privacidad', 'Condiciones', 'FAQ', 'Contacto'].map(l => <a key={l} href="#">{l}</a>)}
                 </div>
-                <div className="f-contact">
-                    <h4>CONTACTO</h4>
-                    <p><Mail size={16} /> info@lapaulettefitness.com</p>
-                    <p><Phone size={16} /> +34 635 303 875</p>
-                    <div className="social-row">
-                        <Instagram size={20} />
-                    </div>
+                <div className="f-item-social">
+                    <a href="#"><Instagram size={20} /></a>
+                    <a href="#"><Phone size={20} /></a>
                 </div>
             </div>
-            <div className="f-bar">
-                &copy; 2026 La Paulette Fitness.
+            <div className="footer-base">
+                &copy; 2026 PAULETTE FITNESS • DISEÑO DE LUJO
             </div>
         </div>
       </footer>
