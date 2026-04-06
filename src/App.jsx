@@ -49,6 +49,38 @@ const AnimatedSection = ({ children, className, id }) => {
     );
 };
 
+const CustomCursor = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isPointer, setIsPointer] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+    const handleMouseOver = (e) => {
+        const style = window.getComputedStyle(e.target);
+        setIsPointer(style.cursor === 'pointer');
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseover', handleMouseOver);
+    return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, []);
+
+  return (
+    <motion.div 
+        className="custom-cursor"
+        animate={{ 
+            x: mousePos.x - 10, 
+            y: mousePos.y - 10,
+            scale: isPointer ? 2.5 : 1,
+            backgroundColor: isPointer ? 'rgba(212, 175, 55, 0.3)' : 'rgba(212, 175, 55, 0)'
+        }}
+        transition={{ type: 'spring', damping: 20, stiffness: 250, mass: 0.5 }}
+    />
+  );
+};
+
 function App() {
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -87,6 +119,7 @@ function App() {
 
   return (
     <div className="App premium">
+      <CustomCursor />
       {/* Progress Bar */}
       <motion.div className="scroll-progress" style={{ scaleX }} />
 
