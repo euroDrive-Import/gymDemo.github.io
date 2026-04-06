@@ -1,35 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { 
     ShoppingCart, Menu, X, Plus, Trash2, Check, 
-    Instagram, Phone, Mail, CircleHelp
+    Instagram, Phone, Mail, CircleHelp, Play, Download, Gift
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getProducts, createOrder } from './services/woocommerce';
 import './App.css';
 
-// --- MOCK DATA FALLBACK (When no keys set) ---
-const MOCK_PRODUCTS = [
-    { id: 1, name: "Plan OnlyDiet", price: "49.99", description: "Personalización nutricional total.", images: [{ src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" }], categories: [{ name: "Planes" }] },
-    { id: 2, name: "Plan Workout", price: "59.99", description: "Entrenamiento adaptado a tu nivel.", images: [{ src: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800" }], categories: [{ name: "Planes" }] },
-    { id: 3, name: "Plan Full Fit", price: "89.99", description: "Combinación de Dieta + Entrenamiento.", images: [{ src: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800" }], categories: [{ name: "Planes" }] },
-    { id: 4, name: "Ebook: Recetario Fit", price: "19.90", description: "50 recetas saludables y fáciles.", images: [{ src: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800" }], categories: [{ name: "Ebooks" }] }
+const PRODUCTS = [
+    { 
+        id: 'p1', name: "Plan OnlyDiet", price: "49.99", 
+        description: "Plan nutricional personalizado, revisiones cada 14 días, recetario saludable.",
+        features: ["Plan nutricional personalizado", "Revisiones cada 14 días", "Asesoramiento suplementación", "Soporte WhatsApp", "Recetario saludable"],
+        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    { 
+        id: 'p2', name: "Plan Workout", price: "59.99", 
+        description: "Rutinas adaptadas a tu nivel, hogar o gym, revisiones mensuales.",
+        features: ["Entrenamiento personalizado", "Rutinas adaptadas", "Revisiones mensuales", "Asesoramiento suplementación", "Hogar / Gym"],
+        image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800"
+    },
+    { 
+        id: 'p3', name: "Plan Full Fit", price: "89.99", 
+        featured: true,
+        description: "Nutrición + Entrenamiento con soporte prioritario y ajustes ilimitados.",
+        features: ["Plan Nutricional + Entrenamiento", "Revisiones cada 14 días", "Ajustes ilimitados", "Respuesta < 24h", "Descuentos especiales"],
+        image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800"
+    },
+    { 
+        id: 'p4', name: "Team Competición", price: "149.99",
+        description: "Entrenamiento avanzado, posing, mindset y preparación específica.",
+        features: ["Entrenamiento avanzado", "Posing técnico", "Asesoramiento estética", "Mindset y motivación", "Seguimiento continuo"],
+        image: "https://images.unsplash.com/photo-1583454110551-21f2fa2ec617?w=800"
+    }
 ];
 
 function App() {
-  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getProducts().then(data => {
-      // If data is empty (no keys or error), use Mocks to keep the web functional for demos
-      setProducts(data.length > 0 ? data : MOCK_PRODUCTS);
-      setLoading(false);
-    });
-  }, []);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -48,27 +56,15 @@ function App() {
 
   const cartTotal = cart.reduce((acc, item) => acc + parseFloat(item.price), 0);
 
-  const handleCheckoutSubmit = async (e) => {
-    e.preventDefault();
-    const orderData = {
-        line_items: cart.map(item => ({ product_id: item.id, quantity: 1 })),
-        billing: {
-            first_name: e.target.name.value,
-            email: e.target.email.value,
-            phone: e.target.phone.value
-        }
-    };
+  const handleWhatsAppCheckout = () => {
+    if (cart.length === 0) return;
     
-    try {
-        await createOrder(orderData);
-        alert('¡Pedido realizado con éxito a WooCommerce!');
-        setCart([]);
-        setIsCheckoutOpen(false);
-    } catch (err) {
-        alert('Simulando Checkout falló (conecta tus claves de WooCommerce en .env)');
-        setCart([]); 
-        setIsCheckoutOpen(false);
-    }
+    const message = `Hola Paulette! Me gustaría contratar los siguientes planes:\n\n` + 
+                    cart.map(item => `- ${item.name} (${item.price}€)`).join('\n') + 
+                    `\n\nTotal: ${cartTotal.toFixed(2)}€\n\n¿Me podrías dar los pasos para empezar?`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/34635303875?text=${encodedMessage}`, '_blank');
   };
 
   return (
@@ -78,14 +74,14 @@ function App() {
         <div className="container">
           <div className="logo"><a href="#">LA PAULETTE</a></div>
           <nav className="nav-links">
-            <a href="#planes">Planes</a>
-            <a href="#sobre-mi">Sobre Mí</a>
-            <a href="#resultados">Resultados</a>
-            <a href="#faq">FAQ</a>
+            <a href="#planes">PLANES</a>
+            <a href="#sobre-mi">SOBRE MÍ</a>
+            <a href="#tienda">TIENDA</a>
+            <a href="#blog">BLOG</a>
           </nav>
           <div className="nav-icons">
             <div className="cart-btn" onClick={() => setIsCartOpen(true)}>
-              <ShoppingCart size={24} />
+              <ShoppingCart size={22} />
               <span className="cart-count">{cart.length}</span>
             </div>
             <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>
@@ -98,185 +94,174 @@ function App() {
       {/* Hero */}
       <section className="hero">
         <div className="hero-overlay"></div>
-        <motion.div 
-            className="hero-content container"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-        >
-          <h6 className="subtitle gold">TRANSFORMACIÓN REAL</h6>
-          <h1>Consigue el cuerpo <br/>que siempre deseaste</h1>
-          <p>Planes 100% personalizados por Paulette. Entrenamiento, Nutrición y Mentalidad.</p>
-          <div className="hero-actions">
-            <a href="#planes" className="btn gold-btn">EMPEZAR AHORA</a>
-            <a href="https://wa.me/34635303875" className="btn outline-white">CONSULTA GRATIS</a>
-          </div>
-        </motion.div>
+        <div className="container">
+          <motion.div 
+              className="hero-content"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+          >
+            <h6 className="subtitle gold">MI TRABAJO</h6>
+            <h1>Es acompañarte</h1>
+            <p>No se trata solo de cambiar tu cuerpo. Se trata de acompañarte con un plan personalizado que encaje con tu vida y te ayude a recuperar equilibrio, confianza y bienestar.</p>
+            <div className="hero-actions">
+              <a href="#sobre-mi" className="btn solid">CONÓCEME</a>
+              <a href="#planes" className="btn outline">VER PLANES</a>
+            </div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* Empoderamiento */}
-      <section className="empower-section section animate-on-scroll">
+      {/* Planes Section */}
+      <section id="planes" className="section bg-light">
         <div className="container">
-          <div className="empower-card">
-            <h2>"No es una dieta, es un estilo de vida que amarás"</h2>
-            <p>Descubre por qué más de 500 mujeres ya han cambiado su relación con el espejo y la comida con nosotros.</p>
-            <div className="stats-row">
-                <div className="stat"><span>+500</span> Mujeres</div>
-                <div className="stat"><span>100%</span> Personalizado</div>
-                <div className="stat"><span>24/7</span> Soporte</div>
-            </div>
+          <header className="section-header">
+            <h6 className="subtitle gold">CONOCE</h6>
+            <h2>Nuestros Planes</h2>
+          </header>
+          
+          <div className="plans-grid">
+            {PRODUCTS.map(p => (
+              <motion.div 
+                  key={p.id} className={`plan-card ${p.featured ? 'featured' : ''}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+              >
+                {p.featured && <div className="badge">MÁS POPULAR</div>}
+                <div className="plan-info">
+                  <h6 className="plan-type">PLAN DE</h6>
+                  <h3>{p.name.split(' ')[1]}</h3>
+                  <div className="p-price-tag">{p.price}€</div>
+                  <ul className="features-list">
+                    {p.features.map((f, i) => <li key={i}><Check size={14} className="gold" /> {f}</li>)}
+                  </ul>
+                  <button className="btn-buy" onClick={() => addToCart(p)}>AÑADIR AL CARRITO</button>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Planes x WooCommerce */}
-      <section id="planes" className="section products-section">
-        <div className="container">
-          <div className="section-header">
-            <h6 className="subtitle gold">LOS MEJORES PLANES</h6>
-            <h2>Nuestra Oferta Fitness</h2>
-          </div>
-          {loading ? (
-            <div className="loader">Cargando catálogo...</div>
-          ) : (
-            <div className="products-grid">
-              {products.map(product => (
-                <motion.div 
-                    key={product.id} className="product-card"
-                    whileHover={{ scale: 1.03 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                >
-                  <div className="p-img" style={{ backgroundImage: `url(${product.images[0].src})` }}>
-                    <div className="p-price">{product.price}€</div>
-                  </div>
-                  <div className="p-details">
-                    <h3>{product.name}</h3>
-                    <p>{product.description.replace(/<[^>]*>?/gm, '').slice(0, 80)}...</p>
-                    <button className="add-btn" onClick={() => addToCart(product)}>
-                      <Plus size={18} /> COMPRAR PLAN
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+      {/* Testimonials */}
+      <section className="section results-section">
+        <div className="container text-center">
+            <h2 className="title-large">RESULTADOS REALES EN MUJERES REALES</h2>
+            <p className="p-intro">Lo que más repiten mis clientas no es el peso que pierden. Es cómo cambian su relación con la comida, con su cuerpo y con ellas mismas. Son procesos bien hechos, adaptados a cada mujer y sostenidos en el tiempo.</p>
+            
+            <div className="results-grid">
+                <div className="result-img before-after-1"></div>
+                <div className="result-img before-after-2"></div>
             </div>
-          )}
+
+            <div className="cta-box">
+                <h3>Reserva tu sesión gratuita de valoración conmigo</h3>
+                <p>Hablemos de tu objetivo, de tu situación y de cómo podemos construir un camino que sí funcione para ti.</p>
+                <a href="https://wa.me/34635303875" className="btn-whatsapp"><Phone size={18} /> HABLAR POR WHATSAPP</a>
+            </div>
         </div>
       </section>
 
-       {/* FAQ */}
-       <section id="faq" className="section faq-section">
-        <div className="container">
-          <div className="section-header">
-            <h6 className="subtitle gold">DUDAS COMUNES</h6>
-            <h2>Preguntas Frecuentes</h2>
-          </div>
-          <div className="faq-grid">
-            <div className="faq-item">
-              <h4><CircleHelp size={20} className="gold" /> ¿Cómo recibo mi plan?</h4>
-              <p>Tras la compra, recibirás un cuestionario. En 48h hábiles tendrás tu plan en tu email y WhatsApp.</p>
+      {/* Sobre Mi */}
+      <section id="sobre-mi" className="section about-me">
+        <div className="container grid-2">
+            <div className="video-area">
+                <div className="video-thumb">
+                    <Play size={50} fill="white" />
+                </div>
+                <h2>Sobre mi</h2>
             </div>
-            <div className="faq-item">
-              <h4><CircleHelp size={20} className="gold" /> ¿Hay permanencia?</h4>
-              <p>No. Pagas mes a mes o por el pack elegido. Tú decides cuándo continuar.</p>
+            <div className="guide-area">
+                <h6 className="subtitle gold">REGALO</h6>
+                <h2>Descarga gratis mi guía de suplementación</h2>
+                <p>Descubre qué suplementos realmente funcionan para tu cuerpo y objetivos.</p>
+                <button className="btn-download"><Download size={18} /> DESCARGAR GUÍA</button>
             </div>
-            <div className="faq-item">
-                <h4><CircleHelp size={20} className="gold" /> ¿Es apto para veganas?</h4>
-                <p>Sí, todos los planes nutricionales tienen opciones 100% vegetales e intolerancias.</p>
-              </div>
-          </div>
         </div>
       </section>
 
-      {/* Cart Drawer */}
+      {/* Gift Cards & Promo */}
+      <section className="section bg-dark text-white">
+        <div className="container grid-2">
+            <div className="promo-card">
+                <Gift className="gold" size={40} />
+                <h6 className="subtitle gold">REGALA SALUD</h6>
+                <h3>Tarjetas de regalo</h3>
+                <p>¿Qué mejor regalo que un extra de motivación? Ayuda a esa persona que siempre dice "El lunes empiezo".</p>
+                <button className="btn-outline-gold">COMPRAR TARJETA</button>
+            </div>
+            <div className="promo-card">
+                <div className="discount-badge">5%</div>
+                <h6 className="subtitle gold">¿ERES NUEVA?</h6>
+                <h3>5% de Descuento</h3>
+                <p>Entrenamiento y nutrición personalizados con acompañamiento cercano a tu ritmo.</p>
+            </div>
+        </div>
+      </section>
+
+      {/* Cart Sidebar */}
       <AnimatePresence>
         {isCartOpen && (
           <>
-            <motion.div 
-                className="cart-overlay-fixed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsCartOpen(false)}
-            />
-            <motion.div 
-                className="cart-sidebar-drawer"
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-            >
-              <div className="cart-h">
-                <h3>Tu Selección</h3>
-                <X onClick={() => setIsCartOpen(false)} className="close-x" />
+            <motion.div className="cart-overlay-blur" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCartOpen(false)} />
+            <motion.div className="cart-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}>
+              <div className="cart-header-top">
+                <h3>TU CARRITO</h3>
+                <X onClick={() => setIsCartOpen(false)} className="cursor-pointer" />
               </div>
-              <div className="cart-list">
-                {cart.length === 0 ? <div className="c-empty">No hay nada seleccionado aún.</div> : (
+              <div className="cart-body">
+                {cart.length === 0 ? <p className="text-center py-10 opacity-50">Tu carrito está vacío</p> : (
                   cart.map((item, i) => (
-                    <div key={i} className="c-item">
-                      <div className="c-item-img" style={{ backgroundImage: `url(${item.images[0].src})` }}></div>
-                      <div className="c-item-info">
-                        <h5>{item.name}</h5>
-                        <p>{item.price}€</p>
+                    <div key={i} className="cart-product">
+                      <div className="cart-prod-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                      <div className="cart-prod-meta">
+                        <h4>{item.name}</h4>
+                        <p className="gold font-bold">{item.price}€</p>
                       </div>
-                      <Trash2 size={16} onClick={() => removeFromCart(i)} className="del-btn" />
+                      <Trash2 size={16} onClick={() => removeFromCart(i)} className="text-red hover:scale-110 transition-all cursor-pointer" />
                     </div>
                   ))
                 )}
               </div>
-              <div className="cart-f">
-                <div className="c-total"><span>Suma:</span><span>{cartTotal.toFixed(2)}€</span></div>
-                <button className="c-checkout-btn" onClick={() => setIsCheckoutOpen(true)}>PAGAR PEDIDO</button>
+              <div className="cart-footer-bottom">
+                <div className="flex-between mb-4">
+                  <span className="font-bold">TOTAL</span>
+                  <span className="font-bold text-xl">{cartTotal.toFixed(2)}€</span>
+                </div>
+                <button className="btn-finalize" onClick={handleWhatsAppCheckout}>FINALIZAR POR WHATSAPP</button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Checkout Modal */}
-      <AnimatePresence>
-        {isCheckoutOpen && (
-          <div className="modal-container">
-            <motion.div 
-                className="checkout-modal"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-            >
-              <button className="close-modal-btn" onClick={() => setIsCheckoutOpen(false)}><X /></button>
-              <h2>Finalizar Compra</h2>
-              <p>Sus datos están cifrados y son seguros.</p>
-              <form onSubmit={handleCheckoutSubmit}>
-                <div className="f-group"><label>Nombre Completo</label><input name="name" required /></div>
-                <div className="f-group"><label>Email de contacto</label><input name="email" type="email" required /></div>
-                <div className="f-group"><label>Teléfono móvil</label><input name="phone" required /></div>
-                <div className="p-selector">
-                    <span>💳 Pagar con Tarjeta o Bizum</span>
-                </div>
-                <button type="submit" className="buy-final-btn">CONFIRMAR Y FINALIZAR</button>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-      
       {/* Footer */}
-      <footer className="main-footer">
+      <footer className="footer-main">
         <div className="container">
-          <div className="footer-grid">
-            <div className="f-col">
-              <h3>LA PAULETTE</h3>
-              <p>La revolución del fitness femenino. Cambiamos vidas, no solo cuerpos.</p>
+            <div className="footer-cols">
+                <div className="f-info">
+                    <h2 className="logo">LA PAULETTE</h2>
+                    <p>Nutrición y entrenamiento para mujeres de forma personalizada.</p>
+                </div>
+                <div className="f-links">
+                    <h4>LINKS</h4>
+                    <a href="#">Mi cuenta</a>
+                    <a href="#">Condiciones generales</a>
+                    <a href="#">Privacidad</a>
+                </div>
+                <div className="f-contact">
+                    <h4>CONTACTO</h4>
+                    <p><Mail size={16} /> info@lapaulettefitness.com</p>
+                    <p><Phone size={16} /> +34 635 303 875</p>
+                    <div className="social-row">
+                        <Instagram size={20} />
+                    </div>
+                </div>
             </div>
-            <div className="f-col">
-              <h4>CONTACTO</h4>
-              <p><Mail size={16} /> info@lapaulettefitness.com</p>
-              <p><Instagram size={16} /> @lapaulette_fit</p>
+            <div className="f-bar">
+                &copy; 2026 La Paulette Fitness.
             </div>
-          </div>
-          <div className="f-bottom">
-            &copy; 2026 La Paulette Fitness. Powered by La Paulette x WooCommerce API.
-          </div>
         </div>
       </footer>
     </div>
